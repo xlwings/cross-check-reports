@@ -6,11 +6,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    name: Test changed-files
+    name: Test reports
     steps:
       - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -21,16 +19,9 @@ jobs:
       - name: Install Python dependencies
         run: pip install -r requirements.txt
 
-      - name: Get changed files in the reports folder
-        id: changed-files-specific
-        uses: tj-actions/changed-files@v31
-        with:
-          files: |
-            reports/**
-
-      - name: Run step if any file(s) in the reports folder change
-        if: steps.changed-files-specific.outputs.any_changed == 'true'
-        run: |
-          echo "One or more files in the docs folder has changed."
-          echo "${{ steps.changed-files-specific.outputs.all_changed_files }}" > changed_files.txt
-          python test_reports.py
+      - name: Run tests
+        env:
+          # Add your xlwings license key as XLWINGS_LICENSE_KEY under
+          # Settings > Secrets > Actions > New Repository secret
+          XLWINGS_LICENSE_KEY: ${{ secrets.XLWINGS_LICENSE_KEY }}
+        run: pytest -vv
