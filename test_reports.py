@@ -6,7 +6,6 @@ import xlwings as xw
 @pytest.fixture(scope="module")
 def reports():
     for f in (Path(".") / "reports").glob("[!~]*.xls*"):
-        print(f.name)
         if f.name.endswith("1.xlsx"):
             report1 = xw.Book(f, mode="r")
         elif f.name.endswith("2.xlsx"):
